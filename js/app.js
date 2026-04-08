@@ -213,11 +213,11 @@ async function loadTrial() {
   const regions = generateVoronoiRegions(svgW, svgH, currentTrial.colorCount);
 
   // Generate glyphs
-  const glyphUrls = generateGlyphs(currentTrial.colorCount);
+  const glyphUrls = generateGlyphs(currentTrial.colorCount, 64);
   trial.blackGlyphs = glyphUrls;
 
   // Generate white variants for dark backgrounds
-  const whitePromises = glyphUrls.map(url => generateWhiteGlyph(url));
+  const whitePromises = glyphUrls.map(url => generateWhiteGlyph(url, 64));
   trial.whiteGlyphs = await Promise.all(whitePromises);
 
   // Shuffle color assignment to regions
@@ -237,7 +237,7 @@ async function loadTrial() {
     svg.appendChild(path);
 
     // Glyph image at centroid
-    const glyphSize = 32;
+    const glyphSize = 48;
     const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
     img.setAttribute('href', glyphUrls[i]);
     img.setAttribute('x', region.centroid.x - glyphSize / 2);
