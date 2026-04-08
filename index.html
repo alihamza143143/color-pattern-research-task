@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Pattern Task</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Setup Screen -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-container">
+      <h1>Color Pattern Task &mdash; Setup</h1>
+      <label for="input-pid">Participant ID:</label>
+      <input type="text" id="input-pid" placeholder="Enter participant ID" required>
+      <label for="input-delay">Key Window Delay (ms):</label>
+      <input type="number" id="input-delay" value="0" min="0" step="100" required>
+      <label for="input-server">Server Endpoint URL (optional):</label>
+      <input type="url" id="input-server" placeholder="https://example.com/api/data">
+      <button id="btn-start" class="btn-primary">Start Task</button>
+    </div>
+  </div>
+
+  <!-- Instructions Screen -->
+  <div id="screen-instructions" class="screen">
+    <div class="instructions-container">
+      <h1>Instructions</h1>
+      <div id="instructions-content"></div>
+      <button id="btn-begin" class="btn-primary">Begin Practice Trials</button>
+    </div>
+  </div>
+
+  <!-- Trial Screen -->
+  <div id="screen-trial" class="screen">
+    <div class="trial-layout">
+      <!-- Left: Key Window -->
+      <div class="panel panel-left">
+        <div class="panel-header">
+          <span>Color Key</span>
+          <button id="btn-open-key" class="btn-open">Open Key</button>
+        </div>
+        <div class="panel-content" id="key-window">
+          <div id="key-content"></div>
+        </div>
+        <div class="mask" id="mask-left"></div>
+        <div class="delay-overlay" id="delay-overlay">
+          <div class="delay-spinner"></div>
+          <span id="delay-text">Opening...</span>
+        </div>
+      </div>
+
+      <!-- Right: Pattern + Resource Windows -->
+      <div class="panel panel-right">
+        <div class="panel-header">
+          <span>Pattern</span>
+          <button id="btn-open-pattern" class="btn-open">Open Pattern</button>
+        </div>
+        <div class="panel-content" id="pattern-window">
+          <svg id="pattern-svg"></svg>
+        </div>
+        <div class="resource-window" id="resource-window">
+          <div id="color-palette"></div>
+        </div>
+        <div class="mask" id="mask-right"></div>
+      </div>
+    </div>
+
+    <!-- Trial Controls -->
+    <div class="trial-controls">
+      <span id="trial-label"></span>
+      <div id="trial-message"></div>
+      <button id="btn-end-trial">End Trial</button>
+    </div>
+  </div>
+
+  <!-- Completion Screen -->
+  <div id="screen-completion" class="screen">
+    <div class="completion-container">
+      <h1>Task Complete</h1>
+      <p>Thank you for participating.</p>
+      <p id="completion-status"></p>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

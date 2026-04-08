@@ -1,0 +1,22 @@
+# Claude Code
+.claude/
+docs/superpowers/
+
+# OS
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (if any)
+node_modules/
+package-lock.json
+
+# Misc
+*.log
+*.tmp

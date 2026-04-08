@@ -1,0 +1,437 @@
+/* css/styles.css */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f0f0;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── Screen management ── */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.screen.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Setup Screen ── */
+.setup-container {
+  background: white;
+  padding: 40px 48px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 420px;
+}
+
+.setup-container h1 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.setup-container label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: #555;
+}
+
+.setup-container input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.setup-container input:focus {
+  border-color: #2196f3;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1976d2;
+}
+
+/* ── Instructions Screen ── */
+.instructions-container {
+  background: white;
+  padding: 40px 48px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.instructions-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.instructions-container h2 {
+  font-size: 1.1rem;
+  margin: 20px 0 10px;
+  color: #444;
+}
+
+.instructions-container p,
+.instructions-container li {
+  line-height: 1.7;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.instructions-container ol,
+.instructions-container ul {
+  padding-left: 24px;
+}
+
+/* ── Trial Layout ── */
+#screen-trial.active {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.trial-layout {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.panel {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.panel-left {
+  border-right: 2px solid #ddd;
+}
+
+.panel-right {
+  border-left: 2px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fafafa;
+  border-bottom: 2px solid #ddd;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.panel-header span {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+}
+
+.btn-open {
+  padding: 8px 20px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-open:hover {
+  background: #388e3c;
+}
+
+.btn-open:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+.panel-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+/* ── Key Window Content ── */
+#key-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  align-content: center;
+}
+
+.key-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f8f8;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.key-item .glyph-container {
+  width: 44px;
+  height: 44px;
+}
+
+.key-item .key-equals {
+  font-size: 1.2rem;
+  color: #888;
+  font-weight: 700;
+}
+
+.key-item .color-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 2px solid #ccc;
+}
+
+/* ── Masks ── */
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #999;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.mask.hidden {
+  display: none;
+}
+
+/* ── Delay Overlay ── */
+.delay-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(50, 50, 50, 0.85);
+  z-index: 25;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.delay-overlay.active {
+  display: flex;
+}
+
+.delay-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(255, 255, 255, 0.25);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Resource Window ── */
+.resource-window {
+  padding: 14px 20px;
+  background: #fafafa;
+  border-top: 2px solid #ddd;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+#color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.color-option {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #222;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+}
+
+/* ── SVG Pattern ── */
+#pattern-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#pattern-svg .region {
+  stroke: #333;
+  stroke-width: 2;
+  fill: white;
+  cursor: pointer;
+  transition: fill 0.15s;
+}
+
+#pattern-svg .region:hover {
+  stroke-width: 3;
+  filter: brightness(0.95);
+}
+
+#pattern-svg .region-label {
+  pointer-events: none;
+}
+
+/* ── Trial Controls ── */
+.trial-controls {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: white;
+  border-top: 2px solid #ddd;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+#trial-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+#trial-message {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+#btn-end-trial {
+  padding: 10px 28px;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+#btn-end-trial:hover {
+  background: #e64a19;
+}
+
+#btn-end-trial.pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 87, 34, 0.6);
+  }
+}
+
+/* ── Completion Screen ── */
+.completion-container {
+  background: white;
+  padding: 48px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.completion-container h1 {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.completion-container p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+#completion-status {
+  margin-top: 12px;
+  font-weight: 600;
+}
