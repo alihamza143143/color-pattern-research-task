@@ -117,6 +117,13 @@ function setupInstructions() {
       <li>If your pattern is not correct, you will be asked to continue editing. You will <em>not</em> be told which colors are wrong.</li>
     </ul>
 
+    <h2>Keyboard Shortcuts:</h2>
+    <ul>
+      <li>Press <strong>1&ndash;9, 0</strong> to quickly select a color from the palette.</li>
+      <li>Press <strong>K</strong> to toggle the color key open/closed.</li>
+      <li>Press <strong>Enter</strong> to submit your answer (same as clicking "End Trial").</li>
+    </ul>
+
     <h2>Practice:</h2>
     <p>You will start with <strong>2 practice trials</strong> using fewer colors, followed by <strong>10 test trials</strong>.</p>
 
@@ -202,6 +209,12 @@ async function loadTrial() {
 
   document.getElementById('trial-message').textContent = '';
   document.getElementById('btn-end-trial').classList.remove('pulse');
+  document.getElementById('regions-counter').textContent = `0 / ${currentTrial.colorCount} filled`;
+
+  // Update progress bar
+  const totalTrials = PRACTICE_TRIALS + TEST_TRIALS;
+  const progress = (trial.currentIndex / totalTrials) * 100;
+  document.getElementById('progress-bar').style.width = `${progress}%`;
 
   // Update trial label
   const totalTrials = PRACTICE_TRIALS + TEST_TRIALS;
@@ -412,6 +425,11 @@ function onRegionClick(index) {
 function checkAllFilled() {
   const filledCount = Object.keys(trial.regionColors).length;
   const btn = document.getElementById('btn-end-trial');
+
+  // Update regions counter
+  document.getElementById('regions-counter').textContent =
+    `${filledCount} / ${trial.colorCount} filled`;
+
   if (filledCount >= trial.colorCount) {
     btn.classList.add('pulse');
   } else {
@@ -510,6 +528,7 @@ function showTransitionMessage(message, onContinue) {
 
 // ── Completion ──
 async function finishTask() {
+  document.getElementById('progress-bar').style.width = '100%';
   showScreen(SCREENS.COMPLETION);
 
   downloadCSV();
@@ -527,6 +546,37 @@ async function finishTask() {
 
   notifyParent();
 }
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', (e) => {
+  if (state.currentScreen !== SCREENS.TRIAL) return;
+
+  // Number keys 1-9, 0 to select colors from palette
+  const key = e.key;
+  if (key >= '0' && key <= '9') {
+    const index = key === '0' ? 9 : parseInt(key) - 1;
+    const swatches = document.querySelectorAll('.color-option');
+    if (index < swatches.length) {
+      swatches.forEach(s => s.classList.remove('selected'));
+      swatches[index].classList.add('selected');
+      trial.selectedColor = swatches[index].getAttribute('data-hex');
+    }
+  }
+
+  // 'k' to toggle key window
+  if (key === 'k' || key === 'K') {
+    if (!trial.keyVisible && !document.getElementById('btn-open-key').disabled) {
+      onOpenKeyClick();
+    } else if (trial.keyVisible) {
+      showPatternSide();
+    }
+  }
+
+  // Enter to end trial
+  if (key === 'Enter') {
+    onEndTrialClick();
+  }
+});
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', init);

@@ -359,7 +359,7 @@ body {
 
 /* ── Trial Controls ── */
 .trial-controls {
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -370,10 +370,40 @@ body {
   flex-shrink: 0;
 }
 
+.trial-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
 #trial-label {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #333;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #4caf50;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.regions-counter {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 #trial-message {
