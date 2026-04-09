@@ -217,7 +217,6 @@ async function loadTrial() {
   document.getElementById('progress-bar').style.width = `${progress}%`;
 
   // Update trial label
-  const totalTrials = PRACTICE_TRIALS + TEST_TRIALS;
   const typeLabel = currentTrial.trialType === 'practice' ? 'Practice' : 'Test';
   document.getElementById('trial-label').textContent =
     `${typeLabel} Trial ${currentTrial.trialNumber} of ${totalTrials}`;
