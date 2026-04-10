@@ -43,6 +43,8 @@ const trial = {
   keyVisible: false,
   colorCount: 0,
   delayInterval: null,
+  correctAfterFirstKeyOpen: null, // tracks correct count after first key viewing
+  hasReturnedFromFirstKey: false,
 };
 
 // ── Screen management ──
@@ -143,7 +145,6 @@ function generateTrials() {
     const colorCount = 3 + Math.floor(Math.random() * 2); // 3 or 4
     const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
     trials.push({
-      trialNumber: i + 1,
       trialType: 'practice',
       colorCount,
       colors: shuffled.slice(0, colorCount),
@@ -156,7 +157,6 @@ function generateTrials() {
       Math.floor(Math.random() * (TEST_COLOR_COUNT_MAX - TEST_COLOR_COUNT_MIN + 1));
     const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
     trials.push({
-      trialNumber: PRACTICE_TRIALS + i + 1,
       trialType: 'test',
       colorCount,
       colors: shuffled.slice(0, colorCount),
@@ -166,7 +166,14 @@ function generateTrials() {
   // Randomize test trial order (keep practice first)
   const practice = trials.slice(0, PRACTICE_TRIALS);
   const test = trials.slice(PRACTICE_TRIALS).sort(() => Math.random() - 0.5);
-  return [...practice, ...test];
+  const combined = [...practice, ...test];
+
+  // Assign sequential display numbers AFTER randomization
+  combined.forEach((t, i) => {
+    t.displayNumber = i + 1;
+  });
+
+  return combined;
 }
 
 // ── Start trials ──
@@ -206,30 +213,31 @@ async function loadTrial() {
   trial.correctMapping = {};
   trial.keyVisible = false;
   trial.colorCount = currentTrial.colorCount;
+  trial.correctAfterFirstKeyOpen = null;
+  trial.hasReturnedFromFirstKey = false;
 
   document.getElementById('trial-message').textContent = '';
   document.getElementById('btn-end-trial').classList.remove('pulse');
   document.getElementById('regions-counter').textContent = `0 / ${currentTrial.colorCount} filled`;
 
-  // Update progress bar
+  // Update progress bar and trial label using sequential display numbers
   const totalTrials = PRACTICE_TRIALS + TEST_TRIALS;
   const progress = (trial.currentIndex / totalTrials) * 100;
   document.getElementById('progress-bar').style.width = `${progress}%`;
 
-  // Update trial label
   const typeLabel = currentTrial.trialType === 'practice' ? 'Practice' : 'Test';
   document.getElementById('trial-label').textContent =
-    `${typeLabel} Trial ${currentTrial.trialNumber} of ${totalTrials}`;
+    `${typeLabel} Trial ${currentTrial.displayNumber} of ${totalTrials}`;
 
   // Generate pattern regions
   const regions = generateVoronoiRegions(svgW, svgH, currentTrial.colorCount);
 
   // Generate glyphs
-  const glyphUrls = generateGlyphs(currentTrial.colorCount, 64);
+  const glyphUrls = generateGlyphs(currentTrial.colorCount, 80);
   trial.blackGlyphs = glyphUrls;
 
   // Generate white variants for dark backgrounds
-  const whitePromises = glyphUrls.map(url => generateWhiteGlyph(url, 64));
+  const whitePromises = glyphUrls.map(url => generateWhiteGlyph(url, 80));
   trial.whiteGlyphs = await Promise.all(whitePromises);
 
   // Shuffle color assignment to regions
@@ -248,8 +256,8 @@ async function loadTrial() {
     path.addEventListener('click', () => onRegionClick(i));
     svg.appendChild(path);
 
-    // Glyph image at centroid
-    const glyphSize = 48;
+    // Glyph image at centroid — larger for visibility
+    const glyphSize = 56;
     const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
     img.setAttribute('href', glyphUrls[i]);
     img.setAttribute('x', region.centroid.x - glyphSize / 2);
@@ -288,6 +296,8 @@ function showPatternSide() {
     if (trial.isFirstKeyOpen) {
       trial.firstKeyOpenDuration = duration;
       trial.isFirstKeyOpen = false;
+      // Mark that we've returned from the first key open — snapshot will be taken on next color fill
+      trial.hasReturnedFromFirstKey = true;
     }
     trial.keyOpenStartTime = null;
   }
@@ -417,8 +427,29 @@ function onRegionClick(index) {
     );
   }
 
+  // Clear error message when participant resumes editing
+  document.getElementById('trial-message').textContent = '';
+
+  // Snapshot correct count after first key open (on the very first color placement after returning)
+  if (trial.hasReturnedFromFirstKey && trial.correctAfterFirstKeyOpen === null) {
+    trial.correctAfterFirstKeyOpen = countCorrectPlacements();
+  }
+
   // Check if all regions filled — pulse the End Trial button
   checkAllFilled();
+}
+
+/**
+ * Count how many regions currently have the correct color.
+ */
+function countCorrectPlacements() {
+  let correct = 0;
+  for (const [index, color] of Object.entries(trial.regionColors)) {
+    if (trial.correctMapping[parseInt(index)] === color) {
+      correct++;
+    }
+  }
+  return correct;
 }
 
 function checkAllFilled() {
@@ -469,12 +500,15 @@ function onEndTrialClick() {
   const completionTime = Date.now() - trial.trialStartTime;
 
   recordTrial({
-    trialNumber: currentTrial.trialNumber,
+    trialNumber: currentTrial.displayNumber,
     trialType: currentTrial.trialType,
+    colorCount: currentTrial.colorCount,
     keyOpenings: trial.keyOpenings,
     firstKeyOpenDuration: trial.firstKeyOpenDuration || 0,
     totalCompletionTime: completionTime,
     attempts: trial.attempts,
+    correctAfterFirstKeyOpen: trial.correctAfterFirstKeyOpen !== null
+      ? trial.correctAfterFirstKeyOpen : 0,
   });
 
   // Advance
@@ -493,6 +527,46 @@ function onEndTrialClick() {
   } else {
     finishTask();
   }
+}
+
+// ── Early termination (ESC key) ──
+function endTaskEarly() {
+  // Record current trial as incomplete if it was started
+  if (trial.trialStartTime !== null && trial.list.length > 0) {
+    const currentTrial = trial.list[trial.currentIndex];
+    const completionTime = Date.now() - trial.trialStartTime;
+
+    // Close key timing if open
+    if (trial.keyOpenStartTime !== null) {
+      const duration = Date.now() - trial.keyOpenStartTime;
+      if (trial.isFirstKeyOpen) {
+        trial.firstKeyOpenDuration = duration;
+        trial.isFirstKeyOpen = false;
+      }
+      trial.keyOpenStartTime = null;
+    }
+
+    recordTrial({
+      trialNumber: currentTrial.displayNumber,
+      trialType: currentTrial.trialType,
+      colorCount: currentTrial.colorCount,
+      keyOpenings: trial.keyOpenings,
+      firstKeyOpenDuration: trial.firstKeyOpenDuration || 0,
+      totalCompletionTime: completionTime,
+      attempts: trial.attempts,
+      correctAfterFirstKeyOpen: trial.correctAfterFirstKeyOpen !== null
+        ? trial.correctAfterFirstKeyOpen : 0,
+    });
+  }
+
+  // Clear any running delay interval
+  if (trial.delayInterval) {
+    clearInterval(trial.delayInterval);
+    trial.delayInterval = null;
+    document.getElementById('delay-overlay').classList.remove('active');
+  }
+
+  finishTask();
 }
 
 // ── Transition message ──
@@ -550,8 +624,9 @@ async function finishTask() {
 document.addEventListener('keydown', (e) => {
   if (state.currentScreen !== SCREENS.TRIAL) return;
 
-  // Number keys 1-9, 0 to select colors from palette
   const key = e.key;
+
+  // Number keys 1-9, 0 to select colors from palette
   if (key >= '0' && key <= '9') {
     const index = key === '0' ? 9 : parseInt(key) - 1;
     const swatches = document.querySelectorAll('.color-option');
@@ -574,6 +649,11 @@ document.addEventListener('keydown', (e) => {
   // Enter to end trial
   if (key === 'Enter') {
     onEndTrialClick();
+  }
+
+  // ESC to end task early (hidden shortcut — not in instructions)
+  if (key === 'Escape') {
+    endTaskEarly();
   }
 });
 

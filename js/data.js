@@ -18,10 +18,12 @@ export function recordTrial(trialData) {
   sessionData.trials.push({
     trialNumber: trialData.trialNumber,
     trialType: trialData.trialType,
+    colorCount: trialData.colorCount,
     keyOpenings: trialData.keyOpenings,
     firstKeyOpenDuration: trialData.firstKeyOpenDuration,
     totalCompletionTime: trialData.totalCompletionTime,
     attempts: trialData.attempts,
+    correctAfterFirstKeyOpen: trialData.correctAfterFirstKeyOpen,
   });
 }
 
@@ -39,8 +41,10 @@ export function downloadCSV() {
     'session_start',
     'trial_number',
     'trial_type',
+    'total_colors_in_pattern',
     'key_openings',
     'first_key_open_duration_ms',
+    'correct_after_first_key_open',
     'total_completion_time_ms',
     'attempts',
   ];
@@ -51,8 +55,10 @@ export function downloadCSV() {
     sessionData.sessionStart,
     t.trialNumber,
     t.trialType,
+    t.colorCount,
     t.keyOpenings,
     t.firstKeyOpenDuration,
+    t.correctAfterFirstKeyOpen,
     t.totalCompletionTime,
     t.attempts,
   ]);

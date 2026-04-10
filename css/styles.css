@@ -224,20 +224,20 @@ body {
 }
 
 .key-item .glyph-container {
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
 }
 
 .key-item .key-equals {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #888;
   font-weight: 700;
 }
 
 .key-item .color-swatch {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
   border: 2px solid #ccc;
 }
 
