@@ -104,9 +104,10 @@ function setupInstructions() {
 
     <h2>How it works:</h2>
     <ol>
-      <li><strong>Pattern Window (right side):</strong> You will see an abstract pattern divided into regions. Each region contains a unique symbol.</li>
+      <li><strong>Pattern Window (right side):</strong> You will see an abstract pattern divided into regions. Each region contains a unique symbol. Click <strong>"Open Pattern"</strong> to view it.</li>
       <li><strong>Color Key (left side):</strong> The key shows which color corresponds to each symbol. Click <strong>"Open Key"</strong> to view it.</li>
       <li><strong>Color Palette (bottom right):</strong> Select a color by clicking on it, then click a region in the pattern to fill it with that color.</li>
+      <li>The open buttons for pattern window and color key are in the upper right corner of each half of the screen.</li>
     </ol>
 
     <h2>Important:</h2>
@@ -119,9 +120,10 @@ function setupInstructions() {
       <li>If your pattern is not correct, you will be asked to continue editing. You will <em>not</em> be told which colors are wrong.</li>
     </ul>
 
-    <h2>Keyboard Shortcuts:</h2>
+    <h2>Keyboard Shortcuts (Optional):</h2>
+    <p>You can always click to select colors. These shortcuts are available as an alternative:</p>
     <ul>
-      <li>Press <strong>1&ndash;9, 0</strong> to quickly select a color from the palette.</li>
+      <li>Press <strong>1&ndash;9, 0</strong> to quickly select the first 10 colors in the palette. If there are more than 10 colors, use the mouse to click any additional colors.</li>
       <li>Press <strong>K</strong> to toggle the color key open/closed.</li>
       <li>Press <strong>Enter</strong> to submit your answer (same as clicking "End Trial").</li>
     </ul>
