@@ -10,7 +10,9 @@ const sessionData = {
 export function initSession(participantId, delayMs) {
   sessionData.participantId = participantId;
   sessionData.delayMs = delayMs;
-  sessionData.sessionStart = new Date().toISOString();
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  sessionData.sessionStart = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
   sessionData.trials = [];
 }
 
